@@ -80,9 +80,9 @@ function calcularTiempoRestanteParaPago() {
     const segundosActualesUTC = ahora.getUTCSeconds();
 
     // Calcular la cantidad de tiempo hasta las 20:00 UTC
-    let horasRestantes = 19 - horaActualUTC;
-    let minutosRestantes = 23;
-    let segundosRestantes = 36;
+    let horasRestantes = 20 - horaActualUTC;
+    let minutosRestantes = 0;
+    let segundosRestantes = 0;
 
     // Si ya es después de las 20:00 UTC, calcular el tiempo hasta las 20:00 UTC del día siguiente
     if (horaActualUTC >= 20) {
