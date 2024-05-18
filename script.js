@@ -64,6 +64,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('user-current-deposit').innerText = web3.utils.fromWei(userCurrentDeposit.toString(), 'ether'); // Convertir a cadena antes de mostrar
             document.getElementById('user-total-withdrawals').innerText = web3.utils.fromWei(userTotalWithdrawals, 'ether');
             document.getElementById('user-total-dividends').innerText = web3.utils.fromWei(userTotalDividends, 'ether');
+            
+            // Calcular el tiempo restante hasta el próximo pago de dividendos basado en el primer depósito
+            const tiempoRestanteParaPago = calcularTiempoRestanteParaPago();
+
+            // Mostrar el tiempo restante en el contador de cuenta regresiva
+            document.getElementById('countdown-timer').innerText = `${tiempoRestanteParaPago.horas}h ${tiempoRestanteParaPago.minutos}m ${tiempoRestanteParaPago.segundos}s`;
         }
 
     } else {
@@ -79,22 +85,10 @@ function calcularTiempoRestanteParaPago() {
     const minutosActualesUTC = ahora.getUTCMinutes();
     const segundosActualesUTC = ahora.getUTCSeconds();
 
-    // Calcular la cantidad de tiempo hasta las 20:00 UTC
-    let horasRestantes = 20 - horaActualUTC;
-    let minutosRestantes = 0;
-    let segundosRestantes = 0;
-
-    // Si ya es después de las 20:00 UTC, calcular el tiempo hasta las 20:00 UTC del día siguiente
-    if (horaActualUTC >= 20) {
-        horasRestantes = 24 - (horaActualUTC - 20);
-    }
-
-    // Calcular los minutos y segundos restantes
-    if (minutosActualesUTC > 0 || segundosActualesUTC > 0) {
-        horasRestantes--;
-        minutosRestantes = 60 - minutosActualesUTC;
-        segundosRestantes = 60 - segundosActualesUTC;
-    }
+    // Calcular la cantidad de tiempo hasta el próximo pago de dividendos basado en el primer depósito
+    let horasRestantes = 24 - horaActualUTC;
+    let minutosRestantes = 60 - minutosActualesUTC;
+    let segundosRestantes = 60 - segundosActualesUTC;
 
     // Retornar el tiempo restante como objeto
     return {
@@ -103,25 +97,4 @@ function calcularTiempoRestanteParaPago() {
         segundos: segundosRestantes
     };
 }
-
-// Función para actualizar el contador de cuenta atrás
-function actualizarContador() {
-    // Obtener el elemento del contador
-    const contador = document.getElementById('countdown-timer');
-
-    // Calcular el tiempo restante
-    const tiempoRestante = calcularTiempoRestanteParaPago();
-
-    // Mostrar el tiempo restante en el contador
-    contador.textContent = `${tiempoRestante.horas}h ${tiempoRestante.minutos}m ${tiempoRestante.segundos}s`;
-}
-
-// Función para inicializar el contador de cuenta atrás
-function inicializarContador() {
-    // Actualizar el contador cada segundo
-    setInterval(actualizarContador, 1000);
-}
-
-// Inicializar el contador al cargar la página
-inicializarContador();
 
