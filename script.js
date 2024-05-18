@@ -64,9 +64,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('user-current-deposit').innerText = web3.utils.fromWei(userCurrentDeposit.toString(), 'ether'); // Convertir a cadena antes de mostrar
             document.getElementById('user-total-withdrawals').innerText = web3.utils.fromWei(userTotalWithdrawals, 'ether');
             document.getElementById('user-total-dividends').innerText = web3.utils.fromWei(userTotalDividends, 'ether');
-            
-            // Calcular el tiempo restante hasta el próximo pago de dividendos basado en el primer depósito
-            const tiempoRestanteParaPago = calcularTiempoRestanteParaPago();
+
+            // Calcular el tiempo restante hasta el próximo pago de dividendos en tiempo real
+            const tiempoRestanteParaPago = calcularTiempoRestanteParaPago(lastDividendsPaymentTime);
 
             // Mostrar el tiempo restante en el contador de cuenta regresiva
             document.getElementById('countdown-timer').innerText = `${tiempoRestanteParaPago.horas}h ${tiempoRestanteParaPago.minutos}m ${tiempoRestanteParaPago.segundos}s`;
@@ -77,18 +77,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Función para calcular el tiempo restante hasta el próximo pago de dividendos
-function calcularTiempoRestanteParaPago() {
+// Función para calcular el tiempo restante hasta el próximo pago de dividendos en tiempo real
+function calcularTiempoRestanteParaPago(ultimoPago) {
     // Obtener la fecha y hora actuales en UTC
-    const ahora = new Date();
-    const horaActualUTC = ahora.getUTCHours();
-    const minutosActualesUTC = ahora.getUTCMinutes();
-    const segundosActualesUTC = ahora.getUTCSeconds();
+    const ahora = Math.floor(new Date().getTime() / 1000);
+    const horaActualUTC = ahora % 86400;
+    const ultimoPagoUTC = ultimoPago % 86400;
 
-    // Calcular la cantidad de tiempo hasta el próximo pago de dividendos basado en el primer depósito
-    let horasRestantes = 24 - horaActualUTC;
-    let minutosRestantes = 60 - minutosActualesUTC;
-    let segundosRestantes = 60 - segundosActualesUTC;
+    // Calcular el tiempo restante hasta el próximo pago de dividendos
+    let tiempoRestanteUTC;
+    if (horaActualUTC >= 20 * 3600) {
+        tiempoRestanteUTC = (24 * 3600) - (horaActualUTC - 20 * 3600);
+    } else {
+        tiempoRestanteUTC = 20 * 3600 - horaActualUTC;
+    }
+
+    // Si el último pago fue después de las 20:00 UTC, entonces el próximo pago es mañana
+    if (ultimoPagoUTC > 20 * 3600) {
+        tiempoRestanteUTC += 24 * 3600;
+    }
+
+    // Convertir el tiempo restante de UTC a horas, minutos y segundos
+    const horasRestantes = Math.floor(tiempoRestanteUTC / 3600);
+    const minutosRestantes = Math.floor((tiempoRestanteUTC % 3600) / 60);
+    const segundosRestantes = tiempoRestanteUTC % 60;
 
     // Retornar el tiempo restante como objeto
     return {
@@ -97,4 +109,6 @@ function calcularTiempoRestanteParaPago() {
         segundos: segundosRestantes
     };
 }
+
+
 
