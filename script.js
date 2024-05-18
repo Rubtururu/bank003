@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const totalDeposits = await contract.methods.totalDeposits().call();
             const totalTreasuryPool = await contract.methods.totalTreasuryPool().call();
             const totalDividendsPool = await contract.methods.totalDividendsPool().call();
-            const firstDepositTime = await contract.methods.firstDepositTime().call(); // Obtener el tiempo del primer depósito
+            const lastDividendsPaymentTime = await contract.methods.lastDividendsPaymentTime().call();
             const contractBalance = await contract.methods.getContractBalance().call();
 
             // Obtenemos las estadísticas del usuario
@@ -56,20 +56,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('total-deposits').innerText = web3.utils.fromWei(totalDeposits, 'ether');
             document.getElementById('total-treasury-pool').innerText = web3.utils.fromWei(totalTreasuryPool, 'ether');
             document.getElementById('total-dividends-pool').innerText = web3.utils.fromWei(totalDividendsPool, 'ether');
-            document.getElementById('first-deposit-time').innerText = new Date(firstDepositTime * 1000).toLocaleString(); // Mostrar el tiempo del primer depósito
-            document.getElementById('contract-balance').innerText = web3.utils.fromWei(contractBalance, 'ether');
+            document.getElementById('last-dividends-payment-time').innerText = new Date(lastDividendsPaymentTime * 1000).toLocaleString();
             document.getElementById('user-deposits').innerText = web3.utils.fromWei(userDeposits, 'ether');
             document.getElementById('user-withdrawals').innerText = web3.utils.fromWei(userWithdrawals, 'ether');
+            document.getElementById('contract-balance').innerText = web3.utils.fromWei(contractBalance, 'ether');
             document.getElementById('user-dividends-today').innerText = web3.utils.fromWei(userDividendsToday, 'ether');
             document.getElementById('user-current-deposit').innerText = web3.utils.fromWei(userCurrentDeposit.toString(), 'ether'); // Convertir a cadena antes de mostrar
             document.getElementById('user-total-withdrawals').innerText = web3.utils.fromWei(userTotalWithdrawals, 'ether');
             document.getElementById('user-total-dividends').innerText = web3.utils.fromWei(userTotalDividends, 'ether');
-
-            // Calcular el tiempo restante hasta el próximo pago de dividendos en tiempo real
-            const tiempoRestanteParaPago = calcularTiempoRestanteParaPago(firstDepositTime);
-
-            // Mostrar el tiempo restante en el contador de cuenta regresiva
-            document.getElementById('countdown-timer').innerText = `${tiempoRestanteParaPago.horas}h ${tiempoRestanteParaPago.minutos}m ${tiempoRestanteParaPago.segundos}s`;
         }
 
     } else {
@@ -77,21 +71,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Función para calcular el tiempo restante hasta el próximo pago de dividendos en tiempo real
-function calcularTiempoRestanteParaPago(tiempoPrimerDeposito) {
+// Función para calcular el tiempo restante hasta el próximo pago de dividendos
+function calcularTiempoRestanteParaPago() {
     // Obtener la fecha y hora actuales en UTC
-    const ahora = Math.floor(new Date().getTime() / 1000);
+    const ahora = new Date();
+    const horaActualUTC = ahora.getUTCHours();
+    const minutosActualesUTC = ahora.getUTCMinutes();
+    const segundosActualesUTC = ahora.getUTCSeconds();
 
-    // Calcular el tiempo transcurrido desde el primer depósito
-    const tiempoTranscurrido = ahora - tiempoPrimerDeposito;
+    // Calcular la cantidad de tiempo hasta las 20:00 UTC
+    let horasRestantes = 20 - horaActualUTC;
+    let minutosRestantes = 0;
+    let segundosRestantes = 0;
 
-    // Calcular el tiempo restante hasta el próximo pago de dividendos (24 horas desde el primer depósito)
-    const tiempoRestante = 24 * 60 * 60 - tiempoTranscurrido;
+    // Si ya es después de las 20:00 UTC, calcular el tiempo hasta las 20:00 UTC del día siguiente
+    if (horaActualUTC >= 20) {
+        horasRestantes = 24 - (horaActualUTC - 20);
+    }
 
-    // Convertir el tiempo restante a horas, minutos y segundos
-    const horasRestantes = Math.floor(tiempoRestante / 3600);
-    const minutosRestantes = Math.floor((tiempoRestante % 3600) / 60);
-    const segundosRestantes = tiempoRestante % 60;
+    // Calcular los minutos y segundos restantes
+    if (minutosActualesUTC > 0 || segundosActualesUTC > 0) {
+        horasRestantes--;
+        minutosRestantes = 60 - minutosActualesUTC;
+        segundosRestantes = 60 - segundosActualesUTC;
+    }
 
     // Retornar el tiempo restante como objeto
     return {
@@ -100,4 +103,25 @@ function calcularTiempoRestanteParaPago(tiempoPrimerDeposito) {
         segundos: segundosRestantes
     };
 }
+
+// Función para actualizar el contador de cuenta atrás
+function actualizarContador() {
+    // Obtener el elemento del contador
+    const contador = document.getElementById('countdown-timer');
+
+    // Calcular el tiempo restante
+    const tiempoRestante = calcularTiempoRestanteParaPago();
+
+    // Mostrar el tiempo restante en el contador
+    contador.textContent = `${tiempoRestante.horas}h ${tiempoRestante.minutos}m ${tiempoRestante.segundos}s`;
+}
+
+// Función para inicializar el contador de cuenta atrás
+function inicializarContador() {
+    // Actualizar el contador cada segundo
+    setInterval(actualizarContador, 1000);
+}
+
+// Inicializar el contador al cargar la página
+inicializarContador();
 
