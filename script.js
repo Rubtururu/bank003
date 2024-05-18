@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('contract-balance').innerText = web3.utils.fromWei(contractBalance, 'ether');
             document.getElementById('user-deposits').innerText = web3.utils.fromWei(userDeposits, 'ether');
             document.getElementById('user-withdrawals').innerText = web3.utils.fromWei(userWithdrawals, 'ether');
+            document.getElementById('contract-balance').innerText = web3.utils.fromWei(contractBalance, 'ether');
             document.getElementById('user-dividends-today').innerText = web3.utils.fromWei(userDividendsToday, 'ether');
             document.getElementById('user-current-deposit').innerText = web3.utils.fromWei(userCurrentDeposit.toString(), 'ether'); // Convertir a cadena antes de mostrar
             document.getElementById('user-total-withdrawals').innerText = web3.utils.fromWei(userTotalWithdrawals, 'ether');
@@ -100,6 +101,8 @@ function calcularTiempoRestanteParaPago(tiempoPrimerDeposito) {
         segundos: segundosRestantes
     };
 }
+
+
 
 
 
