@@ -9,32 +9,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     let gooBalance = 0;
     let gooProduction = 0;
 
-    const units = [
-        { id: 1, name: 'Unit 1', bnbCost: 0.01, gooCost: 100, production: 1 },
-        { id: 2, name: 'Unit 2', bnbCost: 0.02, gooCost: 200, production: 2 },
-        // Add more units as needed
-    ];
+    const contractAddress = '0x9ba22e3b9dfF0cBAbc1CF7CcB540f1333dA8Fde5';
+    const abi = [{"constant":true,"inputs":[{"name":"player","type":"address"}],"name":"getGooProduction","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balances","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"numUpgrades","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lastGooProductionUpdate","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"unitGooProductionIncreases","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"unitId","type":"uint256"},{"name":"amount","type":"uint256"}],"name":"buyUnit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"id","type":"uint256"},{"name":"goo","type":"uint256"},{"name":"class","type":"uint256"},{"name":"unit","type":"uint256"},{"name":"value","type":"uint256"},{"name":"prereq","type":"uint256"}],"name":"addUpgrade","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"upgradeInfo","outputs":[{"name":"upgradeId","type":"uint256"},{"name":"gooCost","type":"uint256"},{"name":"upgradeClass","type":"uint256"},{"name":"unitId","type":"uint256"},{"name":"upgradeValue","type":"uint256"},{"name":"prerequisiteUpgrade","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"player","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"startTime","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"existingPlayer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalGooProduction","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"unitGooProductionMultiplier","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"nextSnapshotTime","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lastGooSaveTime","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"unitInfo","outputs":[{"name":"unitId","type":"uint256"},{"name":"baseGooCost","type":"uint256"},{"name":"gooCostIncreaseHalf","type":"uint256"},{"name":"baseGooProduction","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"id","type":"uint256"},{"name":"goo","type":"uint256"},{"name":"gooIncreaseHalf","type":"uint256"},{"name":"production","type":"uint256"}],"name":"addUnit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"unitsOwned","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"numProdUnits","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"snapshotDailyGooResearchFunding","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"gamePrizePool","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"updateGamePrizePool","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"gooBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deposit","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"players","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}];
 
-    const upgrades = [
-        { id: 1, name: 'Upgrade 1', gooCost: 50, effect: 'Increase production by 10%' },
-        { id: 2, name: 'Upgrade 2', gooCost: 100, effect: 'Increase production by 20%' },
-        // Add more upgrades as needed
-    ];
-
-    async function connectWallet() {
-        if (window.ethereum) {
-            try {
-                await ethereum.request({ method: 'eth_requestAccounts' });
-                web3 = new Web3(window.ethereum);
-                const accounts = await web3.eth.getAccounts();
-                const account = accounts[0];
-                updateBNBBalance(account);
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            alert('Please install MetaMask!');
+    if (window.ethereum) {
+        try {
+            await ethereum.request({ method: 'eth_requestAccounts' });
+            window.web3 = new Web3(window.ethereum);
+            const accounts = await web3.eth.getAccounts();
+            const account = accounts[0];
+            updateBNBBalance(account);
+            window.contract = new web3.eth.Contract(abi, contractAddress);
+        } catch (error) {
+            console.error(error);
         }
+    } else {
+        alert('Please install MetaMask!');
     }
 
     async function updateBNBBalance(account) {
@@ -43,9 +33,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         bnbBalanceElement.textContent = parseFloat(bnbBalance).toFixed(4);
     }
 
+    async function updateGooBalance() {
+        try {
+            gooBalance = await contract.methods.gooBalanceOf(ethereum.selectedAddress).call();
+            gooBalanceElement.textContent = gooBalance;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function updateGooProduction() {
+        try {
+            gooProduction = await contract.methods.gooProductionOf(ethereum.selectedAddress).call();
+            gooProductionElement.textContent = gooProduction;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     function updateBalances() {
-        gooBalanceElement.textContent = gooBalance;
-        gooProductionElement.textContent = gooProduction;
+        updateGooBalance();
+        updateGooProduction();
     }
 
     function createUnitElement(unit) {
@@ -91,12 +99,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.buyUnit = async function(id) {
         const unit = units.find(u => u.id === id);
         if (parseFloat(bnbBalance) >= unit.bnbCost) {
-            // Lógica para comprar con BNB
             try {
                 const accounts = await web3.eth.getAccounts();
                 await web3.eth.sendTransaction({
                     from: accounts[0],
-                    to: '0x9ba22e3b9dfF0cBAbc1CF7CcB540f1333dA8Fde5',
+                    to: contractAddress,
                     value: web3.utils.toWei(unit.bnbCost.toString(), 'ether')
                 });
                 gooProduction += unit.production;
@@ -110,43 +117,69 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    window.buyUnitWithGoo = function(id) {
+    window.buyUnitWithGoo = async function(id) {
         const unit = units.find(u => u.id === id);
         if (gooBalance >= unit.gooCost) {
-            gooBalance -= unit.gooCost;
-            gooProduction += unit.production;
-            updateBalances();
+            try {
+                await contract.methods.buyUnitWithGoo(id).send({ from: ethereum.selectedAddress });
+                gooBalance -= unit.gooCost;
+                gooProduction += unit.production;
+                updateBalances();
+                alert(`Successfully bought ${unit.name} with Goo`);
+            } catch (error) {
+                console.error(error);
+            }
         } else {
             alert('Not enough Goo');
         }
     }
 
-    window.buyUpgrade = function(id) {
+    window.buyUpgrade = async function(id) {
         const upgrade = upgrades.find(u => u.id === id);
         if (gooBalance >= upgrade.gooCost) {
-            gooBalance -= upgrade.gooCost;
-            gooProduction *= 1.1;  // Example effect
-            updateBalances();
+            try {
+                await contract.methods.buyUpgrade(id).send({ from: ethereum.selectedAddress });
+                gooBalance -= upgrade.gooCost;
+                gooProduction *= 1.1;  // Example effect
+                updateBalances();
+                alert(`Successfully bought ${upgrade.name}`);
+            } catch (error) {
+                console.error(error);
+            }
         } else {
             alert('Not enough Goo');
         }
     }
 
-    function claimGoo() {
-        gooBalance += gooProduction;
-        updateBalances();
-    }
+    document.getElementById('claimGoo').addEventListener('click', async () => {
+        try {
+            await contract.methods.claimGoo().send({ from: ethereum.selectedAddress });
+            updateBalances();
+        } catch (error) {
+            console.error(error);
+        }
+    });
 
-    function distributeDividends() {
-        alert('Dividends distributed!');
-    }
+    document.getElementById('distributeDividends').addEventListener('click', async () => {
+        try {
+            await contract.methods.distributeDividends().send({ from: ethereum.selectedAddress });
+            alert('Dividends distributed');
+        } catch (error) {
+            console.error(error);
+        }
+    });
 
-    document.getElementById('claimGoo').addEventListener('click', claimGoo);
-    document.getElementById('distributeDividends').addEventListener('click', distributeDividends);
+    const units = [
+        { id: 1, name: 'Farmer', bnbCost: 0.01, gooCost: 100, production: 1 },
+        { id: 2, name: 'Miner', bnbCost: 0.05, gooCost: 500, production: 5 },
+    ];
 
-    await connectWallet();
+    const upgrades = [
+        { id: 1, name: 'Better Tools', gooCost: 1000, effect: 'Increase production by 10%' },
+        { id: 2, name: 'Advanced Training', gooCost: 5000, effect: 'Increase production by 50%' },
+    ];
+
     renderUnits();
     renderUpgrades();
     updateBalances();
 });
-
