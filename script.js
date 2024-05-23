@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const accounts = await web3.eth.getAccounts();
                 await web3.eth.sendTransaction({
                     from: accounts[0],
-                    to: '0xYourContractAddress',
+                    to: '0x9ba22e3b9dfF0cBAbc1CF7CcB540f1333dA8Fde5',
                     value: web3.utils.toWei(unit.bnbCost.toString(), 'ether')
                 });
                 gooProduction += unit.production;
