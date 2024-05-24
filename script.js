@@ -1,7 +1,7 @@
 const web3 = require('web3');
 
 // Set up Web3 provider
-const provider = new web3.providers.HttpProvider('https://mainnet.infura.io/v3/YOUR_PROJECT_ID');
+const provider = new web3.providers.HttpProvider('https://bsc-testnet.public.blastapi.io');
 const web3Instance = new web3(provider);
 
 // Set up contract instance
