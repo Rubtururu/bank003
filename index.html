@@ -3,37 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bones Goo Farm</title>
+    <title>Farm0001 Game</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Bones Goo Farm</h1>
-        <div class="balance-info">
-            <p><strong>BNB Balance:</strong> <span id="bnbBalance">0</span> BNB</p>
-            <p><strong>Goo Balance:</strong> <span id="gooBalance">0</span> Goo</p>
-            <p><strong>Goo Production:</strong> <span id="gooProduction">0</span> Goo/s</p>
-        </div>
+        <h1>Farm0001 Game</h1>
     </header>
     <main>
-        <section id="units-section">
-            <h2>Units</h2>
-            <div id="units-container">
-                <!-- Units will be dynamically added here -->
-            </div>
+        <section id="game-stats">
+            <h2>Game Stats</h2>
+            <ul>
+                <li>Game Prize Pool: <span id="game-prize-pool">0</span> BNB</li>
+                <li>Total Goo Production: <span id="total-goo-production">0</span></li>
+                <li>Next Snapshot Time: <span id="next-snapshot-time">-</span></li>
+            </ul>
         </section>
-        <section id="upgrades-section">
-            <h2>Upgrades</h2>
-            <div id="upgrades-container">
-                <!-- Upgrades will be dynamically added here -->
-            </div>
+        <section id="player-stats">
+            <h2>Player Stats</h2>
+            <ul>
+                <li>Goo Balance: <span id="goo-balance">0</span></li>
+                <li>Units Owned: <span id="units-owned">0</span></li>
+                <li>Goo Production: <span id="goo-production">0</span></li>
+            </ul>
+        </section>
+        <section id="actions">
+            <h2>Actions</h2>
+            <button id="deposit-btn">Deposit BNB</button>
+            <button id="buy-unit-btn">Buy Unit</button>
+            <button id="update-game-prize-pool-btn">Update Game Prize Pool</button>
         </section>
     </main>
-    <footer>
-        <button id="claimGoo">Claim Goo</button>
-        <button id="distributeDividends">Distribute Dividends</button>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.4/dist/web3.min.js"></script> <!-- Añadir la librería web3 -->
-    <script src="scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.3.4/dist/web3.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
